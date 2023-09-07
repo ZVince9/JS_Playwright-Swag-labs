@@ -1,0 +1,156 @@
+# stages:
+#   - build
+#   - scheduled Run
+
+# build-docker-image:
+#   stage: build
+#   image: ${MIRROR_REGISTRY}docker:latest
+#   services:
+#     - name: ${MIRROR_REGISTRY}docker:dind
+#       alias: docker
+#   variables:
+#     DOCKER_HOST: tcp://docker:2375
+#     DOCKER_TLS_CERTDIR: ""
+#   before_script:
+#     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+#   script:
+#     - while ! nc -z docker 2375; do sleep 0.1; done
+#     - |
+#       if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
+#         tag=""
+#         echo "Running on default branch '$CI_DEFAULT_BRANCH': tag = 'latest'"
+#       else
+#         tag=":$CI_COMMIT_REF_SLUG"
+#         echo "Running on branch '$CI_COMMIT_BRANCH': tag = $tag"
+#       fi
+#     - docker build --pull -t "$CI_REGISTRY_IMAGE${tag}" .
+#     - docker push "$CI_REGISTRY_IMAGE${tag}"
+
+# test-run-desktop-main:
+#   stage: scheduled Run
+#   image: "$CI_REGISTRY_IMAGE:latest"
+#   variables:
+#     CI_TEST_JOB_NAME: "test-run-desktop-main"
+#   script:
+#     - cd /app && npm run test-scheduled-git-desktop
+#   after_script:
+#     - cp -a /app/output $CI_PROJECT_DIR/
+#   rules:
+#     - if: '$CI_PIPELINE_SOURCE != "schedule" && ($run == "main")'
+#     - if: '$CI_PIPELINE_SOURCE == "schedule" && ($run == "main")'
+#   allow_failure: true
+#   artifacts:
+#     when: always
+#     paths:
+#       - output/
+
+# test-run-desktop-cp:
+#   stage: scheduled Run
+#   image: "$CI_REGISTRY_IMAGE:latest"
+#   variables:
+#     CI_TEST_JOB_NAME: "test-run-desktop-cp"
+#   script:
+#     - cd /app && npm run test-cp-funnel
+#   after_script:
+#     - cp -a /app/output $CI_PROJECT_DIR/
+#   rules:
+#     - if: '$CI_PIPELINE_SOURCE != "schedule" && ($run == "cp")'
+#     - if: '$CI_PIPELINE_SOURCE == "schedule" && ($run == "cp")'
+#   allow_failure: true
+#   artifacts:
+#     when: always
+#     paths:
+#       - output/
+
+# test-run-desktop-prod:
+#   stage: scheduled Run
+#   image: "$CI_REGISTRY_IMAGE:latest"
+#   variables:
+#     CI_TEST_JOB_NAME: "test-run-desktop-prod"
+#     PROD_URL_REPORT: "true"
+#   script:
+#     - cd /app && npm run test-desktop-chrome-custom
+#   after_script:
+#     - cp -a /app/output $CI_PROJECT_DIR/
+#   rules:
+#     - if: '$CI_PIPELINE_SOURCE != "schedule" && ($run == "prod")'
+#     - if: '$CI_PIPELINE_SOURCE == "schedule" && ($run == "prod")'
+#   allow_failure: true
+#   artifacts:
+#     when: always
+#     paths:
+#       - output/
+
+# stages:
+#   - build
+#   - scheduled Run
+
+# build-docker-image:
+#   stage: build
+#   image: ${MIRROR_REGISTRY}docker:latest
+#   services:
+#     - name: ${MIRROR_REGISTRY}docker:dind
+#       alias: docker
+#   rules:
+#     - if: $CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web"
+#   variables:
+#     DOCKER_HOST: tcp://docker:2375
+#     DOCKER_TLS_CERTDIR: ""
+#   before_script:
+#     - |
+#       {
+#         echo "@qa:registry=${CI_API_V4_URL}/packages/npm/"
+#         echo "${CI_API_V4_URL#https?}/packages/npm/:_authToken=${CI_JOB_TOKEN}"
+#       } > .npmrc
+#   script:
+#     - while ! nc -z docker 2375; do sleep 0.1; done
+#     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+#     - docker build --pull -t "$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA" -t "$CI_REGISTRY_IMAGE:latest" .
+#     - |
+#       docker push "$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA"
+#       if [[ $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH ]]; then
+#         docker push "$CI_REGISTRY_IMAGE:latest"
+#       fi
+
+# test-run-desktop:
+#   stage: scheduled Run
+#   image: "$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA"
+#   script:
+#     - cd /app && npm run test-scheduled-git-desktop
+#   after_script:
+#     - cp -a /app/output $CI_PROJECT_DIR/
+#   rules:
+#     - if: $CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web"
+#   allow_failure: true
+#   artifacts:
+#     when: always
+#     paths:
+#       - output/
+
+# test-run-desktop:
+#   stage: scheduled Run
+#   image: "$CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA"
+#   variables:
+#     SCRIPT_NAME: "test-scheduled-git-desktop"
+#   script:
+#     - if [[ "$run" == "script-run" ]]; then
+#       echo "Script name is '$SCRIPT_NAME'";
+#       cd /app && npm run $SCRIPT_NAME;
+#       elif [[ "$run" == "custom" ]]; then
+#       echo "Current RUN_PATH is '$RUN_PATH'";
+#       cd /app && npm run test-custom -- "$RUN_PATH";
+#       fi
+#     - echo "Script name is '$SCRIPT_NAME'"
+#     - cd /app && npm run $SCRIPT_NAME
+#   after_script:
+#     - cp -a /app/output $CI_PROJECT_DIR/
+#   rules:
+#     - if: '$CI_PIPELINE_SOURCE != "schedule" && ($run == "script-run")'
+#     - if: '$CI_PIPELINE_SOURCE == "schedule" && ($run == "script-run")'
+#     - if: '$CI_PIPELINE_SOURCE != "schedule" && ($run == "custom")'
+#     - if: '$CI_PIPELINE_SOURCE == "schedule" && ($run == "custom")'
+#   allow_failure: true
+#   artifacts:
+#     when: always
+#     paths:
+#       - output/

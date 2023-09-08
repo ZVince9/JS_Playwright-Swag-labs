@@ -9,7 +9,7 @@
 - [Running Tests](#running-tests)
 - [Project Structure](#project-structure)
 - [Dependencies](#dependencies)
-- [License](#license)
+- [Visual](#visual)
 
 ## Description
 
@@ -40,8 +40,18 @@ Before you begin, ensure you have the following software installed:
 
 - npm run test-regression-chrome
 - npm run test-local
+- npm run test-visual
 
 ^ depending which suite to run
+
+## Visual
+
+- Project has visual testing integrated with applitools.
+- it's checking Login and inventory page after login in.
+
+To run tests run the following
+
+- npm run test-visual
 
 ## Dependencies
 

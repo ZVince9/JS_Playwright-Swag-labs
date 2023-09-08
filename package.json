@@ -12,6 +12,7 @@
   "license": "ISC",
   "scripts": {
     "test-regression-chrome": "npx playwright test tests/e2e --project=chromium --config=run_configs/playwright-config.js --workers=3",
+    "test-visual": "npx playwright test tests/visual/test-visual.test.js --project=chromium --config=run_configs/playwright-config.js --workers=3",
     "test-local": "npx playwright test test/e2e_tests/load-landing.test.js --project=chromium --config=run_configs/playwright-config.js --workers=1 --trace on; exit 0"
   }
 }

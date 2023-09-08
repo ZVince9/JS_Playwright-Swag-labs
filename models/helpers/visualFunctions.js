@@ -47,9 +47,4 @@ async function generateRandomString() {
   return result.toString();
 }
 
-export default {
-  generateRandomString,
-  initializeEyes,
-  closeEyes,
-  checkEyes,
-};
+export { generateRandomString, initializeEyes, closeEyes, checkEyes };

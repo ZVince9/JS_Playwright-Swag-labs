@@ -1,6 +1,6 @@
 // required imports to execute commands
 import { test, expect } from "@playwright/test";
-import { accessMainPage } from "../../models/helpers/CustomFunctions";
+import { accessPage } from "../../models/helpers/CustomFunctions";
 import {
   generateRandomString,
   initializeEyes,
@@ -8,68 +8,55 @@ import {
   closeEyes,
 } from "../../models/helpers/visualFunctions";
 import { Target } from "@applitools/eyes-playwright";
+import { Login } from "../../models/pages/LoginPage";
 
-//test variables:
-let email;
+//test variables
 let batchId;
-let opp_button = '(//a[@class="cyan-button"])[1]';
-let career_button = "//li[@id='menu-item-501']";
-
 test.describe.configure({ mode: "parallel" });
 
 // making actions before each test block
 test.beforeEach(async ({ page }) => {
   batchId = await generateRandomString();
-  await accessMainPage(page);
+  await accessPage(page);
 });
 
 // making actions after each tests run
 test.afterEach(async ({ page }, testInfo) => {
   if (testInfo.status === testInfo.expectedStatus) {
-    console.log(
-      `Passed ${testInfo.title} with status ${testInfo.status}, ${email}`
-    );
+    console.log(`Passed ${testInfo.title} with status ${testInfo.status}`);
   } else {
-    console.log(
-      `Failed ${testInfo.title}, ${email} - ended up at ${page.url()}`
-    );
+    console.log(`Failed ${testInfo.title} - ended up at ${page.url()}`);
   }
 });
 
 test.describe("Visual regressions", () => {
-  test("Visual test for home, opp, career pages", async ({ page }) => {
+  test("Visual test for Login page", async ({ page }) => {
     const eyesInitialFirst = await initializeEyes(
       page,
       "App",
-      "Home page",
+      "Login page",
       batchId,
-      "TestingBatch"
+      "test-batch"
     );
     await checkEyes(eyesInitialFirst, Target.window().fully());
     await closeEyes(eyesInitialFirst);
+  });
 
-    const eyesInitialSecond = await initializeEyes(
+  test("Visual test for inventory page", async ({ page }) => {
+    await Login(
+      page,
+      process.env.CORRECT_USERNAME,
+      process.env.CORRECT_PASSWORD
+    );
+    await expect(page).toHaveURL(/.*inventory/);
+    const eyesInitialFirst = await initializeEyes(
       page,
       "App",
-      "Opp page",
+      "Inventory page",
       batchId,
-      "TestingBatch"
+      "test-batch"
     );
-    await page.click(opp_button);
-    await expect(page).toHaveURL(/opportunities/);
-    await checkEyes(eyesInitialSecond, Target.window().fully());
-    await closeEyes(eyesInitialSecond);
-
-    const eyesInitialThird = await initializeEyes(
-      page,
-      "App",
-      "Career page",
-      batchId,
-      "TestingBatch"
-    );
-    await page.click(career_button);
-    await expect(page).toHaveURL(/careers/);
-    await checkEyes(eyesInitialThird, Target.window().fully());
-    await closeEyes(eyesInitialThird);
+    await checkEyes(eyesInitialFirst, Target.window().fully());
+    await closeEyes(eyesInitialFirst);
   });
 });

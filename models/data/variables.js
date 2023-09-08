@@ -6,6 +6,9 @@ const variables = {
     login_button: "//*[@data-test='login-button']",
     error_message: "//*[contains(@class,'error-message-container')]",
   },
+  Visual: {
+    LoginPage: {},
+  },
 };
 
 export default variables;

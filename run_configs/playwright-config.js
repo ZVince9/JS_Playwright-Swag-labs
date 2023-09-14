@@ -12,7 +12,7 @@ const config = {
   timeout: 180000,
   expect: { timeout: 10000 },
   use: {
-    headless: false,
+    headless: true,
     trace: "only-on-failure",
     screenshot: "only-on-failure",
     video: "retain-on-failure",

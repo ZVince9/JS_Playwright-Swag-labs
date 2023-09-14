@@ -9,7 +9,7 @@ const config = {
   reporter: [["list"], ["junit", { outputFile: "../output/junit.xml" }]],
 
   retries: Number(process.env.RETRY_TIMES),
-  timeout: 90000,
+  timeout: 10000,
   expect: { timeout: 10000 },
   use: {
     headless: true,

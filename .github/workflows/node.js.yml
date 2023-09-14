@@ -17,25 +17,27 @@ jobs:
     strategy:
       matrix:
         node-version: [14.x, 16.x, 18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
       - uses: actions/checkout@v3
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
+
       - run: npm ci
       - run: npm run build --if-present
+
       - name: Run Tests
         id: tests
-        run: npm run test-regression-chrome || echo "Tests failed"
+        run: npm run test-regression-chrome
 
-      - name: Print Tests
-        run: echo ${{steps.tests.outcome}}}
+      - name: Print Test Result
+        run: echo ${{ steps.tests.outcome }}
 
-      - name: Upload on Failure
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
           name: output

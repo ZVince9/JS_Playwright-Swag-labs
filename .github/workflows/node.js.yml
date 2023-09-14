@@ -32,7 +32,7 @@ jobs:
 
       - name: Run Tests
         id: tests
-        run: npm run test-regression-chrome || echo "Tests failed"
+        run: npm run test-regression-chrome"
 
       - name: Print Test Result
         run: echo ${{ steps.tests.outcome }}
@@ -47,10 +47,5 @@ jobs:
           name: output
           path: ./output
 
-  set-workflow-status:
-    needs: build
-    if: failure()
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set Workflow Status
-        run: echo "Tests failed" && exit 1
+      - name: Print Working Directory
+        run: pwd

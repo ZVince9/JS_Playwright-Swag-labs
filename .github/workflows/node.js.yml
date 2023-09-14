@@ -32,7 +32,7 @@ jobs:
 
       - name: Run Tests
         id: tests
-        run: npm run test-regression-chrome"
+        run: npm run test-regression-chrome
 
       - name: Print Test Result
         run: echo ${{ steps.tests.outcome }}

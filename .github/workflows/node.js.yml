@@ -45,7 +45,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: output
-          path: output
+          path: ./output
 
   set-workflow-status:
     needs: build

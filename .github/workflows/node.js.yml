@@ -17,7 +17,6 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x]
-        # node-version: [14.x, 16.x, 18.x]
 
     steps:
       - uses: actions/checkout@v3
@@ -38,13 +37,20 @@ jobs:
       - name: Print Test Result
         run: echo ${{ steps.tests.outcome }}
 
+  upload-artifacts:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
       - name: Upload Artifacts
-        if: always() # Upload artifacts regardless of test outcome
         uses: actions/upload-artifact@v2
         with:
           name: output
           path: output
 
+  set-workflow-status:
+    needs: build
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
       - name: Set Workflow Status
-        if: steps.tests.outcome == 'failure'
         run: echo "Tests failed" && exit 1

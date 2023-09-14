@@ -17,6 +17,7 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x]
+        # node-version: [14.x, 16.x, 18.x]
 
     steps:
       - uses: actions/checkout@v3
@@ -33,17 +34,10 @@ jobs:
       - name: Run Tests
         id: tests
         run: npm run test-regression-chrome
-        continue-on-error: true
 
-  upload-artifacts:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Upload Artifacts
+      - name: Upload Artifacts on Test Failure
+        if: steps.tests.outcome == 'failure'
         uses: actions/upload-artifact@v2
         with:
           name: output
           path: ./output
-
-      - name: Print Working Directory
-        run: pwd

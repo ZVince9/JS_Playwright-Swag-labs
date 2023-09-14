@@ -30,10 +30,14 @@ jobs:
       - run: npm run build --if-present
       - name: Run Tests
         id: tests
-        run: npm run test-regression-chrome || echo "Tests failed"
+        run: npm run test-regression-chrome
 
       - name: Upload on Failure
         uses: actions/upload-artifact@v2
         with:
           name: output
           path: output
+
+      - name: Set Workflow Status
+        if: steps.tests.outcome == 'failure'
+        run: echo "Tests failed" && exit 1

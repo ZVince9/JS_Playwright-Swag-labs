@@ -32,7 +32,6 @@ jobs:
         id: tests
         run: npm run test-regression-chrome || echo "Tests failed"
 
-      # Conditionally upload artifacts only if the tests fail
       - name: Upload on Failure
         uses: actions/upload-artifact@v2
         with:

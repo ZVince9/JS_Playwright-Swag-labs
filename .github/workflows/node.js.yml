@@ -33,21 +33,11 @@ jobs:
       - name: Run Tests
         id: tests
         run: npm run test-regression-chrome
-
-      - name: Print Test Result
-        run: echo ${{ steps.tests.outcome }}
-
-      - name: Always Upload Artifacts
-        if: always() # This step will run regardless of previous step outcomes
-        run: |
-          echo "Uploading Artifacts"
-          mkdir -p ./output # Create the output directory if it doesn't exist
-          # Copy the files you want to upload to the output directory
-          cp -r ./path/to/files ./output
+        continue-on-error: true
 
   upload-artifacts:
-    runs-on: ubuntu-latest
     needs: build
+    runs-on: ubuntu-latest
     steps:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2

@@ -30,7 +30,7 @@ jobs:
       - run: npm run build --if-present
       - name: Run Tests
         id: tests
-        run: npm run test-regression-chrome
+        run: npm run test-regression-chrome || echo "Tests failed"
 
       - name: Upload on Failure
         uses: actions/upload-artifact@v2

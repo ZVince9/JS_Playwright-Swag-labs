@@ -22,7 +22,7 @@ test("Load landing page only", async ({ page }) => {
   await expect(await homePage(page)).toBeVisible();
 });
 
-test.fail("Load landing page only", async ({ page }) => {
+test("Load landing page only", async ({ page }) => {
   await page.goto("https://www.google.com");
-  console.log("fail intentionally");
+  await page.click("thereIsNotSelector");
 });

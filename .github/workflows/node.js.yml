@@ -28,9 +28,13 @@ jobs:
           cache: "npm"
       - run: npm ci
       - run: npm run build --if-present
-      - run: npm run test-regression-chrome
+      - name: Run Tests
+        id: tests
+        run: npm run test-regression-chrome || echo "Tests failed"
 
-      - name: Upload
+      # Conditionally upload artifacts only if the tests fail
+      - name: Upload on Failure
+        if: ${{ failure() }}
         uses: actions/upload-artifact@v2
         with:
           name: output

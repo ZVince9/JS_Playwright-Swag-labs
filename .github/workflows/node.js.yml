@@ -39,7 +39,6 @@ jobs:
         run: npm ci && npm run test-regression-chrome
 
   Artifacts:
-    needs: Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

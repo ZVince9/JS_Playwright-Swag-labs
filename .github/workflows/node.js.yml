@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Upload Artifacts on Test Failure
+      - name: Upload Artifacts --if-present
         if: always()
         uses: actions/upload-artifact@v2
         with:

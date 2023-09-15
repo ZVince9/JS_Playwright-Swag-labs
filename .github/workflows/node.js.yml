@@ -38,13 +38,8 @@ jobs:
         id: tests
         run: npm ci && npm run test-regression-chrome
 
-  Artifacts:
-    needs: Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Upload Artifacts on Test Failure
-        if: always() || failure()
+      - name: Upload Artifacts
+        if: always()
         uses: actions/upload-artifact@v2
         with:
           name: output

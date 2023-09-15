@@ -27,10 +27,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
-
-      - run: npm ci
-      - run: npm install
-      - run: npm install @playwright/test
       - run: npm run build --if-present
 
   Tests:
@@ -40,7 +36,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run Tests
         id: tests
-        run: npm run test-regression-chrome
+        run: npm ci && npm run test-regression-chrome
 
   Artifacts:
     needs: Tests

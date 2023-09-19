@@ -45,7 +45,7 @@ async function catchErroOnPage(page) {
           " Failure: " +
           JSON.stringify(request.failure()) +
           " Body: " +
-          JSON.stringify(request.postDataJSON())
+          JSON.stringify(request.postDataJSON()),
       );
     });
   }

@@ -36,7 +36,7 @@ test.describe("Visual regressions", () => {
       "App",
       "Login page",
       batchId,
-      "test-batch"
+      "test-batch",
     );
     await checkEyes(eyesInitialFirst, Target.window().fully());
     await closeEyes(eyesInitialFirst);
@@ -46,7 +46,7 @@ test.describe("Visual regressions", () => {
     await Login(
       page,
       process.env.CORRECT_USERNAME,
-      process.env.CORRECT_PASSWORD
+      process.env.CORRECT_PASSWORD,
     );
     await expect(page).toHaveURL(/.*inventory/);
     const eyesInitialFirst = await initializeEyes(
@@ -54,7 +54,7 @@ test.describe("Visual regressions", () => {
       "App",
       "Inventory page",
       batchId,
-      "test-batch"
+      "test-batch",
     );
     await checkEyes(eyesInitialFirst, Target.window().fully());
     await closeEyes(eyesInitialFirst);

@@ -32,7 +32,7 @@ test("Login - incorrect", async ({ page }) => {
   await Login(
     page,
     process.env.INCORRECT_USERNAME,
-    process.env.INCORRECT_PASSWORD
+    process.env.INCORRECT_PASSWORD,
   );
   await expect(page.locator(variables.LoginPage.error_message)).toBeVisible();
 });

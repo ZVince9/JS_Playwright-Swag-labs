@@ -5,34 +5,13 @@ name: Node.js CI
 
 on:
   push:
-    branches:
-      - "main"
+    branches: ["main"]
   pull_request:
-    branches:
-      - "main"
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
-  setup:
-    name: Set up Node.js and Install Dependencies
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Git repository
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 18.x  # Use a specific Node.js version for setup
-          cache: "npm"
-
-      - name: Install Node.js dependencies
-        run: npm ci
-
   build:
-    name: Build
-    needs: setup
     runs-on: ubuntu-latest
 
     strategy:
@@ -41,32 +20,32 @@ jobs:
         # node-version: [14.x, 16.x, 18.x]
 
     steps:
-      - name: Checkout Git repository
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
-
-      - name: Build
-        run: npm run build --if-present
-
-  lint:
-    name: Run Linters
-    needs: setup
+      - run: npm run build --if-present
+    
+  run-linters:
+    needs: build
+    name: Run linters
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Git repository
-        uses: actions/checkout@v2
+      - name: Check out Git repository
+        uses: actions/checkout@v3
 
-      - name: Use Node.js 18.x for linting
-        uses: actions/setup-node@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
         with:
-          node-version: 18.x
-          cache: "npm"
+          node-version: 18
+
+      # ESLint and Prettier must be in `package.json`
+      - name: Install Node.js dependencies
+        run: npm ci
 
       - name: Run linters
         uses: wearerequired/lint-action@v2
@@ -75,22 +54,13 @@ jobs:
           prettier: true
 
   tests:
-    name: Run Tests
-    needs: [build, lint]
+    needs: build
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Git repository
-        uses: actions/checkout@v2
-
-      - name: Use Node.js ${{ matrix.node-version }} for testing
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: "npm"
-
+      - uses: actions/checkout@v2
       - name: Run Tests
-        run: npm run test-regression-chrome
+        id: tests
+        run: npm ci && npm run test-regression-chrome
 
       - name: Upload Artifacts
         if: always()
@@ -98,3 +68,4 @@ jobs:
         with:
           name: output
           path: ./output
+
